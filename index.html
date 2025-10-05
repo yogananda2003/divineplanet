@@ -22,8 +22,12 @@
             --font-sans: 'Poppins', sans-serif;
         }
 
-        html { scroll-behavior: smooth; }
-
+        /* FIX: Ensure scroll is smooth on the main body/window */
+        html { 
+            scroll-behavior: smooth; 
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+        }
+        
         body {
             /* Kept body background dark to provide contrast for the glass cards */
             background-color: var(--primary-bg); 
@@ -31,6 +35,7 @@
             font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh; /* Ensure body covers the viewport */
         }
 
         .font-serif { font-family: var(--font-serif); }
@@ -96,10 +101,11 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            overflow-y: auto;
+            /* Use 'scroll' instead of 'auto' for explicit scrollbar when needed */
+            overflow-y: scroll; 
             background-color: rgba(0,0,0,0.9);
-            z-index: 99; /* Below the chat widget */
-            display: none; /* Hidden by default */
+            z-index: 99; 
+            display: none; 
             padding-top: 80px;
             padding-bottom: 80px;
         }
@@ -111,13 +117,16 @@
         /* -------------------------- */
 
 
+        /* FIX: Remove fixed positioning and height from main. Let it flow naturally. */
         main {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: relative; 
             width: 100%;
-            height: 100vh;
-            overflow-y: scroll;
+            min-height: 100vh; /* Ensures content starts after the fixed header area */
+        }
+        
+        /* Add margin to the first section to account for the fixed header */
+        #home {
+            padding-top: 120px !important;
         }
 
         .scroll-section {
@@ -127,7 +136,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Using responsive padding here is key */
             padding: 120px 5%; 
         }
 
@@ -426,7 +434,7 @@
 
     <header>
         <div class="logo">
-             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjMyIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjMyIDQyIiBmaWxsPSIjZjBmMGYwIiBmb250LWZhbWlseT0iQ29ybW9yYW50IEdhcmFtb25kLCBzZXJpZiIgZm9udC1zaXplPSIzMnB4IiBmb250LXdlaWdodD0iNzAwIj5UaGUgRGl2aW5lIFBsYW5ldDwvdGV4dD4KPC9zdmc+Cg==" alt="The Divine Planet Logo">
+             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjMyIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjMyIDQyIiBmaWxsPSIjZjBmMGYwIiBmb250LWZhbWlsaT0iQ29ybW9yYW50IEdhcmFtb25kLCBzZXJpZiIgZm9udC1zaXplPSIzMnB4IiBmb250LXdlaWdodD0iNzAwIj5UaGUgRGl2aW5lIFBsYW5ldDwvdGV4dD4KPC9zdmc+Cg==" alt="The Divine Planet Logo">
         </div>
         <div class="flex items-center space-x-4">
              <!-- Link now triggers the logo page view -->
@@ -558,6 +566,7 @@
                             <details class="service-detail-item">
                                 <summary>Color Therapy</summary>
                                 <p>Using the energetic frequencies of color and light to adjust the body's vibrational patterns, aiding mood, physical healing, and balance.</p>
+                            </p>
                             </details>
                         </div>
                     </div>
@@ -741,10 +750,12 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 3D ANIMATION LOGIC (UPDATED FOR BRIGHTER LOOK) ---
+        // --- 3D ANIMATION LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.querySelector('#bg-canvas');
             let scene, camera, renderer, starParticles, clock, planets = [];
+            
+            // FIX: Since `main` is no longer the scroll container, we reference the window for scroll position.
             const mainContent = document.querySelector('main');
             const logoPage = document.getElementById('logo-page');
             const sections = document.querySelectorAll('.scroll-section');
@@ -759,17 +770,17 @@
                 renderer.toneMapping = THREE.ACESFilmicToneMapping;
                 renderer.outputEncoding = THREE.sRGBEncoding;
 
-                // Lights (INCREASED INTENSITY AND ADDED AMBIENT/HEMISPHERE)
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Increased ambient light
+                // Lights
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
                 scene.add(ambientLight);
                 
-                const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5); // Soft overhead light
+                const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5); 
                 scene.add(hemisphereLight);
 
-                // Stars (Reduced count from 40000 to 10000)
+                // Stars 
                 const starGeometry = new THREE.BufferGeometry();
                 const starVertices = [];
-                const STAR_COUNT = 10000; // REDUCED COUNT HERE
+                const STAR_COUNT = 10000; 
                 for (let i = 0; i < STAR_COUNT; i++) {
                     const x = (Math.random() - 0.5) * 8000;
                     const y = (Math.random() - 0.5) * 8000;
@@ -781,27 +792,26 @@
                 starParticles = new THREE.Points(starGeometry, starMaterial);
                 scene.add(starParticles);
 
-                // Sun (Simple Material - no external texture)
-                const sunLight = new THREE.PointLight(0xffe8a3, 3.0, 5000); // Increased point light intensity
+                // Sun
+                const sunLight = new THREE.PointLight(0xffe8a3, 3.0, 5000); 
                 scene.add(sunLight);
                 const sunGeometry = new THREE.SphereGeometry(20, 64, 64);
                 const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffe8a3 });
                 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
                 scene.add(sun);
 
-                // Planet Data (UPDATED FOR REALISTIC LOOK)
+                // Planet Data
                 const planetData = [
-                    { name: 'Earth', radius: 4, distance: 100, speed: 0.1, color: 0x225588, specular: 0x99aaff, shininess: 30 }, // Deep blue/green Earth tone
-                    { name: 'Jupiter', radius: 10, distance: 300, speed: 0.04, color: 0xcc9966, specular: 0xddccbb, shininess: 10 }, // Muted orange/brown Jupiter tone
-                    { name: 'Saturn', radius: 8, distance: 500, speed: 0.03, color: 0xd8c29d, specular: 0xffffff, shininess: 20, hasRings: true }, // Pale yellow/tan Saturn tone
-                    { name: 'Mars', radius: 3, distance: 180, speed: 0.08, color: 0x8a3324, specular: 0xffaa00, shininess: 15 } // Deep rusty red Mars tone
+                    { name: 'Earth', radius: 4, distance: 100, speed: 0.1, color: 0x225588, specular: 0x99aaff, shininess: 30 }, 
+                    { name: 'Jupiter', radius: 10, distance: 300, speed: 0.04, color: 0xcc9966, specular: 0xddccbb, shininess: 10 }, 
+                    { name: 'Saturn', radius: 8, distance: 500, speed: 0.03, color: 0xd8c29d, specular: 0xffffff, shininess: 20, hasRings: true }, 
+                    { name: 'Mars', radius: 3, distance: 180, speed: 0.08, color: 0x8a3324, specular: 0xffaa00, shininess: 15 } 
                 ];
 
                 planetData.forEach(data => {
                     const planetGroup = new THREE.Group();
                     const planetGeometry = new THREE.SphereGeometry(data.radius, 32, 32);
                     
-                    // MeshPhongMaterial with specular and shininess for realistic light reflection
                     const planetMaterial = new THREE.MeshPhongMaterial({ 
                         color: data.color,
                         specular: data.specular, 
@@ -839,14 +849,13 @@
 
             let screenplay;
             function initAnimation() {
-                // ADJUSTED CAMERA PATH to focus on the sun and be closer to the center
                 screenplay = [
-                    { t: 0, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) }, // Closer start
+                    { t: 0, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) }, 
                     { t: 10, pos: new THREE.Vector3(-150, 10, 150), look: planets[1].group.position },
-                    { t: 20, pos: new THREE.Vector3(0, 50, 0), look: new THREE.Vector3(0, 0, 0) }, // View from top
+                    { t: 20, pos: new THREE.Vector3(0, 50, 0), look: new THREE.Vector3(0, 0, 0) }, 
                     { t: 30, pos: new THREE.Vector3(120, -5, 120), look: planets[3].group.position }, 
                     { t: 40, pos: new THREE.Vector3(50, 20, -50), look: planets[0].group.position }, 
-                    { t: 50, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) } // Back to start
+                    { t: 50, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) } 
                 ];
                 animate();
             }
@@ -883,13 +892,15 @@
             // --- UI LOGIC (Header and Scroll Reveals) ---
             const header = document.querySelector('header');
             
-            mainContent.addEventListener('scroll', () => {
-                const scrollTop = mainContent.scrollTop;
+            // FIX: Listen to the window scroll event for smooth scrolling anywhere on the page
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
                 if (scrollTop > 50) header.classList.add('scrolled');
                 else header.classList.remove('scrolled');
             });
             
             // Intersection Observer for scroll animations
+            // FIX: Set root to null to observe against the document's viewport
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -897,7 +908,7 @@
                         observer.unobserve(entry.target); 
                     }
                 });
-            }, { threshold: 0.1, root: mainContent });
+            }, { threshold: 0.1, root: null }); // root: null means the viewport is the root
 
             sections.forEach(section => observer.observe(section));
 
@@ -913,18 +924,17 @@
             
             const showLogoPage = (e) => {
                 e.preventDefault();
-                mainContent.style.display = 'none';
+                // When the logo page is shown, prevent main content from scrolling
+                document.body.style.overflowY = 'hidden'; 
                 logoPage.style.display = 'block';
-                // Scroll to top of the new page
                 logoPage.scrollTop = 0;
             };
 
             const hideLogoPage = (e) => {
                 e.preventDefault();
+                // Restore scrolling when hiding the logo page
+                document.body.style.overflowY = 'scroll';
                 logoPage.style.display = 'none';
-                mainContent.style.display = 'block';
-                // Scroll to top of the main page
-                mainContent.scrollTop = 0; 
             };
             
             showLogoButton.addEventListener('click', showLogoPage);
