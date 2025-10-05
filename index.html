@@ -117,11 +117,12 @@
         /* -------------------------- */
 
 
-        /* FIX: Remove fixed positioning and height from main. Let it flow naturally. */
+        /* FIX: Ensure main content stacks above the background animation. */
         main {
             position: relative; 
             width: 100%;
-            min-height: 100vh; /* Ensures content starts after the fixed header area */
+            min-height: 100vh;
+            z-index: 1; /* Sets stacking context above z-index: -1 background */
         }
         
         /* Add margin to the first section to account for the fixed header */
@@ -142,14 +143,14 @@
         .content-column {
             max-width: 650px;
             width: 100%;
-            z-index: 10;
+            z-index: 10; /* Ensure content columns are clickable */
         }
         
         /* Ensure content takes full mobile width and centers, but expands significantly on desktop */
         .content-container {
             max-width: 900px;
             width: 100%;
-            z-index: 10;
+            z-index: 10; /* Ensure content containers are clickable */
             padding: 0 5%;
         }
 
@@ -434,7 +435,7 @@
 
     <header>
         <div class="logo">
-             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjMyIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjMyIDQyIiBmaWxsPSIjZjBmMGYwIiBmb250LWZhbWlsaT0iQ29ybW9yYW50IEdhcmFtb25kLCBzZXJpZiIgZm9udC1zaXplPSIzMnB4IiBmb250LXdlaWdodD0iNzAwIj5UaGUgRGl2aW5lIFBsYW5ldDwvdGV4dD4KPC9zdmc+Cg==" alt="The Divine Planet Logo">
+             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjMyIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjMyIDQyIiBmaWxsPSIjZjBmMGYwIiBmb250LWZhbWlsaT0iQ29ybW9yYW50IEdhcmFtb25kLCBzZXJpZiIgZm9udC1zaXplPSIzMnB4IiBmb250LWdlaWdodD0iNzAwIj5UaGUgRGl2aW5lIFBsYW5ldDwvdGV4dD4KPC9zdmc+Cg==" alt="The Divine Planet Logo">
         </div>
         <div class="flex items-center space-x-4">
              <!-- Link now triggers the logo page view -->
@@ -566,7 +567,6 @@
                             <details class="service-detail-item">
                                 <summary>Color Therapy</summary>
                                 <p>Using the energetic frequencies of color and light to adjust the body's vibrational patterns, aiding mood, physical healing, and balance.</p>
-                            </p>
                             </details>
                         </div>
                     </div>
