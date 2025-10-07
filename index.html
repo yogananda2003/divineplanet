@@ -7,47 +7,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Include icons library for modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* CSS Variables for a clean dark/spiritual aesthetic */
         :root {
             --primary-bg: #000000;
             --secondary-bg: #111111;
-            --accent-gold: #FFD700; /* Stardust Gold */
+            --accent-gold: #FFD700;
             --text-primary: #f0f0f0;
             --text-secondary: #a0a0a0;
-            --brand-violet: #9370DB; /* Cosmic Violet */
+            --brand-violet: #9370DB; /* Medium Purple */
             --font-serif: 'Cormorant Garamond', serif;
             --font-sans: 'Poppins', sans-serif;
         }
 
-        /* FIX: Ensure scroll is smooth on the main body/window */
+        /* CRITICAL MOBILE FIXES & Base Styles */
+        * {
+            -webkit-tap-highlight-color: rgba(147, 112, 219, 0.3);
+            -webkit-touch-callout: none;
+            box-sizing: border-box;
+        }
+
         html { 
             scroll-behavior: smooth; 
-            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+            overflow-x: hidden;
+            touch-action: manipulation;
         }
         
         body {
-            /* Kept body background dark to provide contrast for the glass cards */
             background-color: var(--primary-bg); 
             color: var(--text-primary);
             font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            min-height: 100vh; /* Ensure body covers the viewport */
+            min-height: 100vh;
+            touch-action: pan-y; /* Allow vertical scrolling */
         }
 
         .font-serif { font-family: var(--font-serif); }
-        .font-sans { font-family: var(--font-sans); }
 
-        /* Utility bridges for custom color vars used like Tailwind classes */
+        /* Custom utility classes using CSS variables */
         .text-text-secondary { color: var(--text-secondary); }
-        .text-text-primary { color: var(--text-primary); }
         .text-var-brand-violet { color: var(--brand-violet); }
         .bg-var-brand-violet { background-color: var(--brand-violet); }
         .bg-var-accent-gold { background-color: var(--accent-gold); }
+        .text-var-accent-gold { color: var(--accent-gold); }
 
+        /* THREE.js Background Canvas */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -55,77 +62,99 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            /* Changed pure black background in three.js to #111 for brighter light contrast */
-            background-color: #111111;
+            pointer-events: none;
+            background-color: var(--secondary-bg); /* Use secondary-bg for space feel */
         }
         
+        /* Fixed Header */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             padding: 20px 5%;
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            pointer-events: none; /* Default: ignore mouse events */
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
         }
         
         header.scrolled {
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.8);
             backdrop-filter: blur(10px);
+            pointer-events: auto; /* Enable mouse events when scrolled */
         }
 
-        .logo img { height: 40px; }
+        .logo-svg {
+            height: 40px; 
+            width: 180px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+         .logo img { 
+            height: 40px; 
+            pointer-events: auto;
+            touch-action: manipulation;
+        }
 
         .header-cta {
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 8px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 12px 24px;
             border-radius: 50px;
             text-decoration: none;
             color: var(--text-primary);
             font-size: 0.9rem;
-            font-weight: 400;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            touch-action: manipulation;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .header-cta:hover {
+        .header-cta:hover,
+        .header-cta:active {
             background-color: var(--text-primary);
             color: var(--primary-bg);
+            transform: scale(1.05);
         }
 
-        /* --- Logo Page Styles --- */
+        /* Logo Page Fixes */
         #logo-page {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            /* Use 'scroll' instead of 'auto' for explicit scrollbar when needed */
-            overflow-y: scroll; 
-            background-color: rgba(0,0,0,0.9);
-            z-index: 99; 
-            display: none; 
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.98);
+            z-index: 2000;
+            display: none;
             padding-top: 80px;
             padding-bottom: 80px;
+            pointer-events: auto;
+            touch-action: pan-y;
+            transition: opacity 0.3s ease;
         }
 
         .logo-symbol-item {
             border-left: 2px solid var(--brand-violet);
             padding-left: 1rem;
         }
-        /* -------------------------- */
 
-
-        /* FIX: Ensure main content stacks above the background animation. */
         main {
             position: relative; 
             width: 100%;
             min-height: 100vh;
-            z-index: 1; /* Sets stacking context above z-index: -1 background */
+            z-index: 1;
+            pointer-events: auto;
+            touch-action: pan-y;
         }
         
-        /* Add margin to the first section to account for the fixed header */
         #home {
             padding-top: 120px !important;
         }
@@ -139,22 +168,15 @@
             align-items: center;
             padding: 120px 5%; 
         }
-
-        .content-column {
-            max-width: 650px;
-            width: 100%;
-            z-index: 10; /* Ensure content columns are clickable */
-        }
         
-        /* Ensure content takes full mobile width and centers, but expands significantly on desktop */
         .content-container {
             max-width: 900px;
             width: 100%;
-            z-index: 10; /* Ensure content containers are clickable */
+            z-index: 10;
             padding: 0 5%;
         }
 
-        /* Simplified Animation for a clean slate */
+        /* Enhanced Scroll Reveal Animation */
         .reveal-element {
             opacity: 0;
             transform: translateY(20px);
@@ -168,87 +190,102 @@
         .is-visible .reveal-element.delay-400 { transition-delay: 400ms; }
         .is-visible .reveal-element.delay-500 { transition-delay: 500ms; }
 
+        /* Glassmorphism Styles */
         .glass-card {
-            background: rgba(18, 18, 18, 0.4);
+            background: rgba(18, 18, 18, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             transition: all 0.3s ease;
+            pointer-events: auto;
+            touch-action: manipulation;
         }
         
         .testimonial-card {
-            background: rgba(18, 18, 18, 0.4);
+            background: rgba(18, 18, 18, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 24px;
         }
 
-        /* Styling for service list containers */
         .service-list {
-            height: 100%; /* Ensure equal height in grid */
+            height: 100%;
         }
         
-        /* Service Details Styling */
+        /* Mobile-Optimized Service Details (Accordions) */
         .service-detail-item {
             margin: 0;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .service-detail-item:last-child {
             border-bottom: none;
         }
 
-        /* Style the summary to look like a clickable list item */
         .service-detail-item summary {
-            list-style: none; /* Hide default triangle */
-            padding: 0.5rem 0;
+            list-style: none;
+            padding: 0.75rem 0;
             color: var(--text-secondary);
             font-weight: 500;
-            transition: color 0.2s ease, padding 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
             outline: none;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 20;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            pointer-events: auto;
         }
 
-        .service-detail-item summary:hover {
-            color: var(--accent-gold); /* Hover effect on desktop */
+        .service-detail-item summary:hover,
+        .service-detail-item summary:active,
+        .service-detail-item summary:focus {
+            color: var(--accent-gold);
+            transform: translateX(5px);
         }
         
-        /* Custom bullet point for the summary */
         .service-detail-item summary::before {
-            content: "•";
+            content: "▶";
             color: var(--brand-violet);
             font-weight: bold;
-            display: inline-block; 
-            width: 1em;
+            display: inline-block;
+            width: 1.5em;
             margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .service-detail-item[open] summary::before {
+            transform: rotate(90deg);
         }
         
-        /* Style the expanded content */
         .service-detail-item p {
-            padding: 0.5rem 0 0.5rem 1.5rem; /* Indent the description */
-            line-height: 1.5;
+            padding: 0.75rem 0 0.75rem 2rem;
+            line-height: 1.6;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
-        /* Style for when the item is open */
         .service-detail-item[open] summary {
             color: var(--text-primary);
         }
         
-        /* Custom styles for Chatbot */
+        /* Chat Widget Styles */
         #chat-widget {
-            /* FIX: Ensure z-index is high for visibility */
             z-index: 10000;
+            pointer-events: auto !important;
+            touch-action: manipulation;
         }
+
         #chat-window {
-            /* INCREASED HEIGHT AND WIDTH */
-            height: 550px; /* Increased from 400px */
-            width: 350px; /* Increased from 300px */
+            height: 550px;
+            width: 350px;
             border-radius: 20px;
             overflow: hidden;
             display: flex;
@@ -257,22 +294,29 @@
             transform: scale(0.9) translateY(10px);
             transform-origin: bottom right;
             transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto !important;
+            touch-action: pan-y;
         }
 
+        /* Use JS to control display to enable transition */
         #chat-window.open {
             opacity: 1;
             transform: scale(1) translateY(0);
+            display: flex; /* Ensure it is visible */
+        }
+        
+        #chat-window:not(.open) {
+            display: none; /* Hide when not open */
         }
 
         #chat-messages {
-            /* FIX: Use flex-grow: 1 to ensure it takes up all available vertical space */
-            flex-grow: 1; 
+            flex-grow: 1;
             overflow-y: auto;
-            /* Custom scrollbar for better look */
             scrollbar-width: thin;
             scrollbar-color: var(--brand-violet) transparent;
-            padding-right: 8px; /* Added padding to ensure text doesn't hit the edge */
-            margin-bottom: 12px; /* Space between messages and menu */
+            padding-right: 8px;
+            margin-bottom: 12px;
+            touch-action: pan-y;
         }
 
         #chat-messages::-webkit-scrollbar {
@@ -287,18 +331,18 @@
         .user-question-bubble {
             background-color: var(--brand-violet);
             color: white;
-            padding: 8px 12px;
+            padding: 12px 16px;
             border-radius: 12px 12px 4px 12px;
             display: inline-block;
             max-width: 85%;
             font-size: 0.9rem;
-            margin-left: auto; /* Push to the right */
+            margin-left: auto;
         }
 
         .bot-message-bubble {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
             color: var(--text-primary);
-            padding: 8px 12px;
+            padding: 12px 16px;
             border-radius: 12px 12px 12px 4px;
             display: inline-block;
             max-width: 85%;
@@ -308,22 +352,85 @@
         .chat-menu-btn {
             display: block;
             width: 100%;
-            background-color: rgba(147, 112, 219, 0.2); /* Light violet background */
+            background-color: rgba(147, 112, 219, 0.2);
             color: var(--brand-violet);
             font-size: 0.9rem;
             font-weight: 500;
-            padding: 10px 12px;
+            padding: 14px 16px;
             border-radius: 12px;
             text-align: left;
             margin-bottom: 8px;
-            transition: background-color 0.2s, color 0.2s;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            touch-action: manipulation;
+            min-height: 48px;
+            pointer-events: auto !important;
         }
 
-        .chat-menu-btn:hover {
+        .chat-menu-btn:hover,
+        .chat-menu-btn:active,
+        .chat-menu-btn:focus {
             background-color: var(--brand-violet);
             color: white;
+            transform: scale(1.02);
+        }
+
+        /* CRITICAL MOBILE TOUCH TARGET FIXES */
+        button, a, .clickable {
+            touch-action: manipulation !important;
+            pointer-events: auto !important;
+            min-height: 44px; /* Ensure sufficient tap area */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Enhanced mobile buttons */
+        .mobile-btn {
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            touch-action: manipulation !important;
+            pointer-events: auto !important;
+        }
+
+        .mobile-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            #chat-window {
+                width: 90vw;
+                height: 70vh;
+                max-width: 380px;
+                max-height: 600px;
+                right: 5vw;
+                bottom: 5vw;
+            }
+            
+            .service-detail-item summary {
+                font-size: 1.05rem;
+                padding: 1rem 0;
+            }
+            
+            .header-cta {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .mobile-btn {
+                min-height: 48px;
+                padding: 16px 24px;
+            }
         }
         
     </style>
@@ -331,10 +438,10 @@
 <body>
     <canvas id="bg-canvas"></canvas>
     
-    <!-- --- LOGO SYMBOLISM PAGE (Full-Screen Dynamic View) --- -->
+    <!-- LOGO SYMBOLISM PAGE -->
     <section id="logo-page">
         <div class="content-container max-w-4xl mx-auto pt-16">
-            <button id="back-to-home" class="text-text-secondary hover:text-white mb-8 flex items-center transition-colors">
+            <button id="back-to-home" class="text-text-secondary hover:text-white mb-8 flex items-center transition-colors relative z-10 mobile-btn">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Home
             </button>
             
@@ -344,32 +451,21 @@
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mt-16">
-                
                 <!-- Logo Visual -->
                 <div class="md:col-span-1 flex justify-center items-center">
                     <div class="w-64 h-64 relative">
-                        <!-- 1. The Golden Circle -->
-                        <svg viewBox="0 0 100 100" class="absolute inset-0">
-                            <circle cx="50" cy="50" r="48" stroke="var(--accent-gold)" stroke-width="2" fill="none"/>
-                        </svg>
-                        <!-- 2. The Six-Pointed Star -->
-                        <svg viewBox="0 0 100 100" class="absolute inset-0">
-                            <polygon points="50,2 62.5,35 98,35 70,57 78,92 50,70 22,92 30,57 2,35 37.5,35" fill="var(--brand-violet)" opacity="0.8"/>
-                        </svg>
-                        <!-- 3. The Central Eye & Crescent -->
-                        <svg viewBox="0 0 100 100" class="absolute inset-0">
-                            <!-- Eye -->
-                            <circle cx="50" cy="45" r="10" fill="white"/>
-                            <circle cx="50" cy="45" r="4" fill="var(--primary-bg)"/>
-                            <!-- Crescent Moon -->
-                            <path d="M 50 65 A 25 25 0 0 1 50 25 A 30 30 0 0 0 50 65" fill="var(--accent-gold)"/>
-                        </svg>
+                        <!-- Placeholder for PNG Logo image (Updated) -->
+                        <img 
+                            src="https://placehold.co/256x256/9370DB/FFD700?text=SYMBOL+PLACEHOLDER" 
+                            alt="The Divine Planet Symbol Placeholder" 
+                            class="w-full h-full object-contain rounded-xl shadow-lg border-2 border-var-accent-gold" 
+                            onerror="this.onerror=null; this.src='https://placehold.co/256x256/111111/f0f0f0?text=Logo+Missing';"
+                        />
                     </div>
                 </div>
 
                 <!-- Symbolism Breakdown -->
                 <div class="md:col-span-2 space-y-8">
-                    
                     <div class="logo-symbol-item">
                         <h3 class="font-serif text-2xl font-semibold text-var-accent-gold mb-2">1. The Golden Circle: The Infinite Cosmos</h3>
                         <p class="text-text-secondary">The outermost Golden Circle represents The Infinite Cosmos and the ultimate reality from which all creation flows. It symbolizes the boundless energy that contains all existence, reminding us that we are all held within this single, eternal whole.</p>
@@ -386,15 +482,16 @@
                     </div>
 
                     <div class="logo-symbol-item">
-                        <h3 class="font-serif text-2xl font-semibold text-var-accent-gold mb-4">5. The Name: Divine Planet & Soul Awakening</h3>
+                        <!-- Renamed from 5 to 4 to match the flow -->
+                        <h3 class="font-serif text-2xl font-semibold text-var-accent-gold mb-4">4. The Name: Divine Planet & Soul Awakening</h3>
                         <p class="text-text-secondary">Our name affirms that all life is sacred (**Divine Planet**), and its inhabitants are here to realize their true purpose. **Soul Awakening** is our clear mission: to guide you back to your authentic, spiritual self and live in harmony with the universal order, regardless of your background or path.</p>
                     </div>
                 </div>
             </div>
             
-            <!-- 4. The Six Elements Grid (using data from logo_elements_data.csv) -->
+            <!-- Six Elements Grid -->
             <div class="mt-16 pt-8 border-t border-gray-800">
-                <h2 class="font-serif text-3xl font-bold mb-8 text-center">4. The Six Elements: Balancing the Human Experience</h2>
+                <h2 class="font-serif text-3xl font-bold mb-8 text-center">5. The Six Elements: Balancing the Human Experience</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
                     <div class="glass-card p-4">
                         <i class="fas fa-leaf text-2xl text-green-500 mb-2"></i>
@@ -430,16 +527,13 @@
             </div>
         </div>
     </section>
-    <!-- ----------------------------------------------------------------- -->
 
-
-    <header>
+     <header>
         <div class="logo">
-             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjMyIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjMyIDQyIiBmaWxsPSIjZjBmMGYwIiBmb250LWZhbWlsaT0iQ29ybW9yYW50IEdhcmFtb25kLCBzZXJpZiIgZm9udC1zaXplPSIzMnB4IiBmb250LWdlaWdodD0iNzAwIj5UaGUgRGl2aW5lIFBsYW5ldDwvdGV4dD4KPC9zdmc+Cg==" alt="The Divine Planet Logo">
+             <img src="./imgs/Reiki Logo.png" alt="The Divine Planet Logo">
         </div>
         <div class="flex items-center space-x-4">
-             <!-- Link now triggers the logo page view -->
-             <button id="show-logo-page" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors text-sm">Symbolism</button>
+             <button id="show-logo-page" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors text-sm relative z-10 mobile-btn">Symbolism</button>
              <a href="#contact" class="header-cta">Chat on WhatsApp</a>
         </div>
     </header>
@@ -447,32 +541,30 @@
     <main>
         <!-- HERO SECTION -->
         <section class="scroll-section" id="home">
-            <div class="content-column text-left md:text-center text-white md:max-w-4xl">
-                <!-- REMOVED STAR EMOJI AND EM DASH -->
+            <div class="content-container text-left md:text-center text-white md:max-w-4xl">
                 <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 reveal-element">The Divine Planet: Heal & Transform</h1>
                 <p class="text-lg md:text-xl max-w-xl mx-auto text-text-secondary mb-10 reveal-element delay-200 font-sans">Spiritual and energy therapies for balance, clarity, and inner peace.</p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full md:justify-center reveal-element delay-300">
-                    <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-semibold py-3 px-8 rounded-xl hover:bg-white transition-all duration-300 transform hover:scale-[1.02] font-sans text-center">
+                    <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-semibold py-3 px-8 rounded-xl hover:bg-white transition-all duration-300 transform hover:scale-[1.02] font-sans text-center mobile-btn">
                         Chat on WhatsApp
                     </a>
-                    <a href="#services" class="bg-transparent border border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-var-brand-violet transition-all duration-300 transform hover:scale-[1.02] font-sans text-center">
+                    <a href="#services" class="bg-transparent border border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-var-brand-violet transition-all duration-300 transform hover:scale-[1.02] font-sans text-center mobile-btn">
                         Explore Services
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- SERVICES SECTION (NOW INTERACTIVE) -->
+        <!-- SERVICES SECTION -->
         <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="services">
             <div class="content-container max-w-xl mx-auto md:max-w-5xl">
                 <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Services</h2>
                 <p class="text-text-secondary text-lg mb-12 reveal-element delay-100 text-center">Gentle, grounded, and transformative modalities for holistic wellbeing. **Tap/Click the names for details.**</p>
                 
-                <!-- Desktop: 2-column grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
                     <!-- Energy Healing -->
-                    <div class="service-list glass-card p-6 reveal-element delay-200">
+                    <div class="service-list glass-card p-6 reveal-element delay-200 relative z-20">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Energy Healing</h3>
                         <div class="space-y-1">
                             <details class="service-detail-item">
@@ -489,8 +581,8 @@
                             </details>
                             <details class="service-detail-item">
                                 <summary>Vibrational</summary>
-                                <p>Using sound, crystals, and other energetic tools to balance and align the body’s subtle energy field and raise overall frequency.</p>
-                            </details>
+                                <p>Using sound, crystals, and other energetic tools to balance and align the body's subtle energy field and raise overall frequency.</p>
+                            </p>
                             <details class="service-detail-item">
                                 <summary>EFT</summary>
                                 <p>Emotional Freedom Technique (Tapping) is a powerful self-help method involving tapping on specific meridian points to calm the nervous system and clear emotional distress.</p>
@@ -499,7 +591,7 @@
                     </div>
 
                     <!-- Spiritual Therapies -->
-                    <div class="service-list glass-card p-6 reveal-element delay-300">
+                    <div class="service-list glass-card p-6 reveal-element delay-300 relative z-20">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Spiritual Therapies</h3>
                         <div class="space-y-1">
                             <details class="service-detail-item">
@@ -520,9 +612,10 @@
                             </details>
                         </div>
                     </div>
+                    
 
                     <!-- Holistic Practices -->
-                    <div class="service-list glass-card p-6 reveal-element delay-400">
+                    <div class="service-list glass-card p-6 reveal-element delay-400 relative z-20">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Holistic Practices</h3>
                         <div class="space-y-1">
                             <details class="service-detail-item">
@@ -551,9 +644,8 @@
                             </details>
                         </div>
                     </div>
-
                     <!-- Alternative Therapies -->
-                    <div class="service-list glass-card p-6 reveal-element delay-500">
+                    <div class="service-list glass-card p-6 reveal-element delay-500 relative z-20">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Alternative Therapies</h3>
                         <div class="space-y-1">
                             <details class="service-detail-item">
@@ -570,9 +662,8 @@
                             </details>
                         </div>
                     </div>
-                    
-                    <!-- Guidance & Divination (Spans both columns on desktop) -->
-                    <div class="service-list glass-card p-6 md:col-span-2 reveal-element delay-600">
+                    <!-- Guidance & Divination -->
+                    <div class="service-list glass-card p-6 md:col-span-2 reveal-element delay-500 relative z-20">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Guidance & Divination</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-8">
                             <div>
@@ -608,7 +699,6 @@
                 <p class="text-text-secondary text-lg mb-8 reveal-element delay-100 text-center">Real experiences from those who've walked this path.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
                     <div class="testimonial-card reveal-element delay-200">
                         <p class="font-serif text-lg italic text-white mb-4 leading-relaxed">"I felt a deep calm within minutes. Gentle, powerful, and grounding."</p>
                         <p class="font-bold text-var-brand-violet font-sans">— Aarav S.</p>
@@ -622,14 +712,12 @@
             </div>
         </section>
 
-
-        <!-- ABOUT SECTION (MISSION) -->
+        <!-- ABOUT SECTION -->
         <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="about">
             <div class="content-container max-w-xl mx-auto md:max-w-5xl">
                 <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Our Mission</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-8 reveal-element delay-100">
-
                     <div class="md:col-span-3">
                         <p class="text-text-secondary text-lg mb-8 leading-relaxed text-center">
                             The Divine Planet is an **open sanctuary** that helps everyone awaken the soul, balance the being, and live in harmony with the divine universe through the practice of Meditation.
@@ -639,22 +727,20 @@
             </div>
         </section>
 
-
         <!-- NEWSLETTER SECTION -->
         <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="newsletter">
             <div class="content-container max-w-xl mx-auto md:max-w-5xl">
                 <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Newsletter</h2>
                 <div class="glass-card p-6 reveal-element delay-100 md:max-w-md mx-auto">
                     <p class="text-text-secondary mb-4">Gentle insights, practices, and updates—delivered occasionally.</p>
-                    <input type="email" placeholder="Your email address" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none mb-3">
-                    <button class="w-full bg-var-accent-gold text-black font-bold py-3 rounded-lg hover:bg-white transition-colors duration-300">
+                    <input type="email" placeholder="Your email address" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none mb-3 min-h-[44px]">
+                    <button class="w-full bg-var-accent-gold text-black font-bold py-3 rounded-lg hover:bg-white transition-colors duration-300 mobile-btn">
                         Subscribe
                     </button>
                     <p class="text-text-secondary text-xs mt-3">By subscribing, you agree to receive emails from The Divine Planet. You can unsubscribe anytime.</p>
                 </div>
             </div>
         </section>
-
 
         <!-- CONTACT SECTION -->
         <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="contact">
@@ -666,7 +752,7 @@
                     <div class="glass-card p-6 reveal-element delay-100">
                         <p class="text-text-secondary mb-4">Have a question or want guidance on which session to choose?</p>
                         <p class="text-white font-bold mb-3">Phone / WhatsApp: +91 7892112327</p>
-                        <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-bold py-3 px-8 rounded-lg hover:bg-white transition-all duration-300 w-full inline-block text-center">
+                        <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-bold py-3 px-8 rounded-lg hover:bg-white transition-all duration-300 w-full inline-block text-center mobile-btn">
                             Chat on WhatsApp
                         </a>
                     </div>
@@ -675,17 +761,26 @@
                     <div class="glass-card p-6 reveal-element delay-200">
                         <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Visit, Call, or Message</h3>
                         <p class="text-text-secondary mb-6">We respond swiftly on WhatsApp. For bookings, questions, or guidance, just say hello.</p>
-                        <!-- Map / Location Embed Placeholder (Matches the video visual 0:12) -->
-                        <div class="bg-gray-800 h-48 w-full rounded-lg flex items-center justify-center text-text-secondary italic border border-gray-700">
-                            Map / Location embed (optional)
+                        <!-- FIX: Removed the extraneous div and correctly formatted the iframe -->
+                        <div class="h-48 w-full rounded-lg overflow-hidden border border-gray-700">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d622.9605476317412!2d77.56706603474288!3d13.10699249937247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDA2JzI1LjIiTiA3N8KwMzQnMDYuOCJF!5e0!3m2!1sen!2sin!4v1696600000000!5m2!1sen!2sin"
+                                width="100%" 
+                                height="100%" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
                         </div>
                     </div>
                     
-                    <!-- Quick Contact Card (moved from About section) -->
+                    
+                    <!-- Quick Contact Card -->
                     <div class="glass-card p-6 reveal-element delay-300 md:col-span-2">
                         <h4 class="font-sans text-sm uppercase tracking-widest text-text-secondary mb-3">Direct Contact</h4>
                         <p class="text-text-secondary mb-3">Prefer WhatsApp? Tap the button to start a conversation right now.</p>
-                        <a href="https://wa.me/917892112327" target="_blank" class="bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition-colors duration-300 flex items-center justify-center mb-2 md:w-1/2 mx-auto">
+                        <a href="https://wa.me/917892112327" target="_blank" class="bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition-colors duration-300 flex items-center justify-center mb-2 md:w-1/2 mx-auto mobile-btn">
                             <i class="fab fa-whatsapp mr-2"></i> WhatsApp: +91 7892112327
                         </a>
                     </div>
@@ -697,13 +792,13 @@
         <footer class="bg-transparent py-10 px-5 border-t border-gray-900 reveal-element">
             <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left text-sm text-text-secondary space-y-4 md:space-y-0">
                 <div class="flex justify-center space-x-4 flex-wrap">
-                    <a href="#home" class="hover:text-white transition-colors">Home</a>
-                    <a href="#about" class="hover:text-white transition-colors">Mission</a>
-                    <button id="footer-show-logo-page" class="hover:text-white transition-colors">Symbolism</button>
-                    <a href="#services" class="hover:text-white transition-colors">Services</a>
-                    <a href="#" class="hover:text-white transition-colors">Blog</a>
-                    <a href="#newsletter" class="hover:text-white transition-colors">Newsletter</a>
-                    <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+                    <a href="#home" class="hover:text-white transition-colors mobile-btn">Home</a>
+                    <a href="#about" class="hover:text-white transition-colors mobile-btn">Mission</a>
+                    <button id="footer-show-logo-page" class="hover:text-white transition-colors mobile-btn">Symbolism</button>
+                    <a href="#services" class="hover:text-white transition-colors mobile-btn">Services</a>
+                    <a href="#" class="hover:text-white transition-colors mobile-btn">Blog</a>
+                    <a href="#newsletter" class="hover:text-white transition-colors mobile-btn">Newsletter</a>
+                    <a href="#contact" class="hover:text-white transition-colors mobile-btn">Contact</a>
                 </div>
                 <div>
                     Contact: Phone/WhatsApp +91 7892112327
@@ -716,14 +811,13 @@
     </main>
 
     <!-- CHAT BOT WIDGET -->
-    <div id="chat-widget" class="fixed bottom-6 right-6 z-[1000]">
-        <!-- Chat Toggle Button -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-[10000]">
         <button id="chat-toggle" class="bg-var-brand-violet text-white p-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300">
             <i class="fas fa-comment-dots text-xl"></i>
         </button>
 
-        <!-- Chat Window -->
-        <div id="chat-window" class="hidden absolute bottom-0 right-0 mb-16 w-80 h-96 glass-card flex flex-col p-4">
+        <!-- Initial style set to display:none to allow JS to control the transition -->
+        <div id="chat-window" class="absolute bottom-0 right-0 mb-16 glass-card flex-col p-4" style="display: none;">
             <!-- Header -->
             <div class="border-b border-gray-700 pb-3 mb-3">
                 <h4 class="font-serif text-xl font-bold text-white">Divine Guide</h4>
@@ -732,13 +826,12 @@
             
             <!-- Messages Container -->
             <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2">
-                <!-- Initial Bot Message -->
                 <div class="flex justify-start">
                     <p class="bot-message-bubble">Welcome! I'm here to provide quick clarity. Please select a question below.</p>
                 </div>
             </div>
             
-            <!-- Menu/Input Area (FAQs) -->
+            <!-- Menu/Input Area -->
             <div id="chat-menu" class="pt-3 border-t border-gray-700 mt-auto">
                 <button data-question="choice" class="chat-menu-btn">How do I choose the right therapy?</button>
                 <button data-question="online" class="chat-menu-btn">Are all sessions conducted online?</button>
@@ -750,14 +843,11 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 3D ANIMATION LOGIC ---
+        // THREE.js 3D ANIMATION LOGIC
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.querySelector('#bg-canvas');
             let scene, camera, renderer, starParticles, clock, planets = [];
             
-            // FIX: Since `main` is no longer the scroll container, we reference the window for scroll position.
-            const mainContent = document.querySelector('main');
-            const logoPage = document.getElementById('logo-page');
             const sections = document.querySelectorAll('.scroll-section');
             
             function initScene() {
@@ -768,7 +858,7 @@
                 renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                renderer.outputEncoding = THREE.sRGBEncoding;
+                // renderer.outputEncoding = THREE.sRGBEncoding; // Removed sRGBEncoding as it may cause issues with default browser config
 
                 // Lights
                 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
@@ -849,6 +939,7 @@
 
             let screenplay;
             function initAnimation() {
+                // Defines the camera path in space and what it looks at
                 screenplay = [
                     { t: 0, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) }, 
                     { t: 10, pos: new THREE.Vector3(-150, 10, 150), look: planets[1].group.position },
@@ -864,6 +955,7 @@
                 requestAnimationFrame(animate);
                 const elapsedTime = clock.getElapsedTime();
 
+                // Rotate and orbit planets
                 planets.forEach(p => {
                     const angle = elapsedTime * p.speed;
                     p.group.position.x = Math.cos(angle) * p.distance;
@@ -871,7 +963,9 @@
                     p.planetMesh.rotation.y += 0.002;
                 });
 
-                const loopTime = elapsedTime % screenplay[screenplay.length-1].t;
+                // Camera Path Interpolation
+                const maxTime = screenplay[screenplay.length-1].t;
+                const loopTime = elapsedTime % maxTime;
                 let currentKeyframe = 0;
                 for(let i = 0; i < screenplay.length - 1; i++){
                     if(loopTime >= screenplay[i].t && loopTime < screenplay[i+1].t){ currentKeyframe = i; break; }
@@ -879,9 +973,13 @@
                 
                 const start = screenplay[currentKeyframe];
                 const end = screenplay[currentKeyframe + 1];
-                const progress = (loopTime - start.t) / (end.t - start.t);
-                const smoothProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                const duration = end.t - start.t;
+                const progress = (loopTime - start.t) / duration;
                 
+                // Use smooth step for smoother transition (ease-in-out)
+                const smoothProgress = progress * progress * (3 - 2 * progress);
+                
+                // Lerp (linear interpolate) camera position and look target
                 camera.position.lerpVectors(start.pos, end.pos, smoothProgress);
                 const lookAtTarget = new THREE.Vector3().lerpVectors(start.look, end.look, smoothProgress);
                 camera.lookAt(lookAtTarget);
@@ -889,18 +987,16 @@
                 renderer.render(scene, camera);
             }
 
-            // --- UI LOGIC (Header and Scroll Reveals) ---
+            // UI LOGIC
             const header = document.querySelector('header');
             
-            // FIX: Listen to the window scroll event for smooth scrolling anywhere on the page
             window.addEventListener('scroll', () => {
                 const scrollTop = window.scrollY || document.documentElement.scrollTop;
                 if (scrollTop > 50) header.classList.add('scrolled');
                 else header.classList.remove('scrolled');
             });
             
-            // Intersection Observer for scroll animations
-            // FIX: Set root to null to observe against the document's viewport
+            // Intersection Observer for scroll reveal animation
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -908,50 +1004,56 @@
                         observer.unobserve(entry.target); 
                     }
                 });
-            }, { threshold: 0.1, root: null }); // root: null means the viewport is the root
+            }, { threshold: 0.1, root: null });
 
             sections.forEach(section => observer.observe(section));
 
-            // Start 3D animation immediately
+            // Start 3D animation
             initScene();
             initAnimation(); 
             
-            
-            // --- LOGO PAGE NAVIGATION LOGIC ---
+            // LOGO PAGE NAVIGATION
             const showLogoButton = document.getElementById('show-logo-page');
+            const headerLogo = document.getElementById('header-logo');
             const footerShowLogoButton = document.getElementById('footer-show-logo-page');
             const backToHomeButton = document.getElementById('back-to-home');
+            const logoPage = document.getElementById('logo-page');
             
             const showLogoPage = (e) => {
                 e.preventDefault();
-                // When the logo page is shown, prevent main content from scrolling
+                e.stopPropagation();
                 document.body.style.overflowY = 'hidden'; 
                 logoPage.style.display = 'block';
+                setTimeout(() => {
+                     logoPage.style.opacity = '1';
+                }, 10);
                 logoPage.scrollTop = 0;
             };
 
             const hideLogoPage = (e) => {
                 e.preventDefault();
-                // Restore scrolling when hiding the logo page
-                document.body.style.overflowY = 'scroll';
-                logoPage.style.display = 'none';
+                e.stopPropagation();
+                logoPage.style.opacity = '0';
+                setTimeout(() => {
+                    logoPage.style.display = 'none';
+                    document.body.style.overflowY = 'auto';
+                }, 300); // Match transition duration
             };
             
-            showLogoButton.addEventListener('click', showLogoPage);
-            footerShowLogoButton.addEventListener('click', showLogoPage);
-            backToHomeButton.addEventListener('click', hideLogoPage);
+            if (showLogoButton) showLogoButton.addEventListener('click', showLogoPage);
+            if (headerLogo) headerLogo.addEventListener('click', showLogoPage);
+            if (footerShowLogoButton) footerShowLogoButton.addEventListener('click', showLogoPage);
+            if (backToHomeButton) backToHomeButton.addEventListener('click', hideLogoPage);
 
         });
 
-
-        // --- CHATBOT LOGIC (Updated to FAQ) ---
+        // ENHANCED CHATBOT LOGIC
         document.addEventListener('DOMContentLoaded', () => {
             const chatToggle = document.getElementById('chat-toggle');
             const chatWindow = document.getElementById('chat-window');
             const chatMessages = document.getElementById('chat-messages');
             const chatMenu = document.getElementById('chat-menu');
             
-            // Define pre-defined answers
             const predefinedAnswers = {
                 choice: "We recommend reviewing the detailed descriptions under the **Services** section. If you are still unsure, our experts offer a **free initial consultation** via WhatsApp to assess your needs.",
                 online: "Yes, all our spiritual and energy therapies (Reiki, Akashic Records, Divination) are conducted **online via video call**. This allows us to serve clients globally in the comfort of their home.",
@@ -959,32 +1061,40 @@
                 book: "The simplest way is to tap the **Chat on WhatsApp** button. Send us a message detailing the service you are interested in, and we will guide you through scheduling and payment."
             };
 
-            // Toggle Chat Window
-            chatToggle.addEventListener('click', () => {
-                const isHidden = chatWindow.classList.contains('hidden');
-                if (isHidden) {
-                    chatWindow.classList.remove('hidden');
-                    void chatWindow.offsetWidth; 
-                    chatWindow.classList.add('open');
+            // FIX: Refactored chat toggle to enable CSS transitions
+            const toggleChat = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = chatWindow.classList.contains('open');
+                if (!isOpen) {
+                    // Open: Set display to flex immediately, then add 'open' class for transition
+                    chatWindow.style.display = 'flex';
+                    // Use rAF/setTimeout for next frame transition trigger
+                    requestAnimationFrame(() => {
+                        chatWindow.classList.add('open');
+                    });
                 } else {
+                    // Close: Remove 'open' class for transition, then set display to none after transition finishes
                     chatWindow.classList.remove('open');
                     setTimeout(() => {
-                        chatWindow.classList.add('hidden');
-                    }, 300);
+                        chatWindow.style.display = 'none';
+                    }, 300); // Match transition duration (0.3s)
                 }
-            });
+            };
 
-            // Helper function to simulate bot response
+            if (chatToggle) {
+                chatToggle.addEventListener('click', toggleChat);
+            }
+
             function addBotMessage(text) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'flex justify-start';
                 messageDiv.innerHTML = `<p class="bot-message-bubble">${text}</p>`;
                 chatMessages.appendChild(messageDiv);
-                // Auto-scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
             
-            // Helper function to simulate user click
             function addUserQuestion(text) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'flex justify-end';
@@ -993,30 +1103,34 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // Handle Menu Clicks (User selects a question)
-            chatMenu.querySelectorAll('.chat-menu-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const questionKey = e.target.getAttribute('data-question');
-                    const questionText = e.target.textContent;
-                    
-                    // 1. Display User's Question
-                    addUserQuestion(questionText);
-                    
-                    // 2. Get and Display Bot's Answer
-                    const answer = predefinedAnswers[questionKey];
-                    
-                    // Use a slight delay for better chat feel
-                    setTimeout(() => {
-                        addBotMessage(answer);
+            // Menu button handling
+            if (chatMenu) {
+                chatMenu.querySelectorAll('.chat-menu-btn').forEach(button => {
+                    const handleClick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         
-                        // 3. Re-display the menu prompt
+                        const questionKey = e.target.getAttribute('data-question');
+                        const questionText = e.target.textContent;
+                        
+                        addUserQuestion(questionText);
+                        
+                        const answer = predefinedAnswers[questionKey];
+                        
+                        // Simulate bot response delay
                         setTimeout(() => {
-                            addBotMessage("Do you have another question, or are you ready to chat on WhatsApp?");
-                        }, 1000);
-                        
-                    }, 500); 
+                            addBotMessage(answer);
+                            
+                            setTimeout(() => {
+                                addBotMessage("Do you have another question, or are you ready to chat on WhatsApp?");
+                            }, 1000);
+                            
+                        }, 500); 
+                    };
+                    
+                    button.addEventListener('click', handleClick);
                 });
-            });
+            }
         });
     </script>
 </body>
